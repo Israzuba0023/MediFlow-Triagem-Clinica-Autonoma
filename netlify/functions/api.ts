@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import serverless from 'serverless-http';
 import { createMediFlowApp } from '../../src/server/app.ts';
 

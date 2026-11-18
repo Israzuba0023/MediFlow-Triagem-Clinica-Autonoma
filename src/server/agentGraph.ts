@@ -11,11 +11,23 @@ import { putOciObject, type OciFolderPrefix } from './ociStorage.ts';
 import { isSafeExternalWebhookUrl, sanitizeClinicalInput } from './security.ts';
 import { addAlert, loadRules, upsertDocument } from './store.ts';
 
+export function resolveGeminiApiKey(): string | null {
+  const candidates = [process.env.GEMINI_API_KEY, process.env.GOOGLE_API_KEY];
+  for (const raw of candidates) {
+    if (!raw) continue;
+    const cleaned = raw.trim().replace(/^["']|["']$/g, '').trim();
+    if (cleaned && cleaned !== 'MY_GEMINI_API_KEY') {
+      return cleaned;
+    }
+  }
+  return null;
+}
+
 function getGeminiClient(): GoogleGenAI {
-  const apiKey = process.env.GEMINI_API_KEY?.trim();
-  if (!apiKey || apiKey === 'MY_GEMINI_API_KEY') {
+  const apiKey = resolveGeminiApiKey();
+  if (!apiKey) {
     throw new Error(
-      'GEMINI_API_KEY não configurada no servidor. Defina a variável de ambiente GEMINI_API_KEY no ambiente de hospedagem (no Netlify, inclua o escopo Functions e publique um novo deploy).'
+      'GEMINI_API_KEY não configurada no servidor. Defina GEMINI_API_KEY nas Environment variables do Netlify (escopo Functions) e publique um novo deploy.'
     );
   }
   return new GoogleGenAI({

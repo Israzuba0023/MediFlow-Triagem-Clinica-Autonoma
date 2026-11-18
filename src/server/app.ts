@@ -11,7 +11,7 @@ import {
   type TriageRecord,
   type UserRole,
 } from '../shared/clinicalSchemas.ts';
-import { runAutonomousTriageGraph } from './agentGraph.ts';
+import { resolveGeminiApiKey, runAutonomousTriageGraph } from './agentGraph.ts';
 import {
   listOciBucketObjects,
   moveOciObject,
@@ -307,11 +307,10 @@ export function createMediFlowApp(): Express {
 
   // ---------------- MONITORAMENTO E SAÚDE DO SERVIÇO ----------------
   app.get('/api/health', (_req, res) => {
-    const key = process.env.GEMINI_API_KEY?.trim();
     res.json({
       status: 'ok',
       service: 'MediFlow Clinical Triage Agent',
-      geminiConfigured: Boolean(key && key !== 'MY_GEMINI_API_KEY'),
+      geminiConfigured: Boolean(resolveGeminiApiKey()),
       security: getSecurityRuntimeStatus(),
       timestamp: new Date().toISOString(),
     });
