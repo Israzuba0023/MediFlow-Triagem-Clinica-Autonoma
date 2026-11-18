@@ -402,7 +402,11 @@ export const TriageWorkspace: React.FC<TriageWorkspaceProps> = ({
                 <ShieldAlert className="w-4 h-4 text-red-700 shrink-0 mt-0.5" />
                 <div className="space-y-0.5">
                   <p className="font-semibold text-red-950">
-                    Entrada bloqueada pela inspeção de segurança
+                    {error.includes('Sessão')
+                      ? 'Sessão expirada ou inválida'
+                      : error.includes('GEMINI_API_KEY') || error.includes('Timeout')
+                        ? 'Falha temporária no processamento'
+                        : 'Entrada bloqueada pela inspeção de segurança'}
                   </p>
                   <p className="text-red-800 leading-relaxed">{error}</p>
                 </div>

@@ -67,6 +67,14 @@ export default function App() {
         setAuthLoading(false);
       }
     })();
+
+    const handleUnauthorized = () => {
+      setUser(null);
+      setDocuments([]);
+      setSelectedDoc(null);
+    };
+    window.addEventListener('mediflow:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('mediflow:unauthorized', handleUnauthorized);
   }, []);
 
   const handleAuthenticated = async (loggedUser: AuthUser) => {

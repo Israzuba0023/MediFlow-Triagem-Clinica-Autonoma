@@ -1,6 +1,5 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import type { Request, Response, NextFunction } from 'express';
 import type { AuditLogEntry, AuthUser, TriageRecord, UserRole } from '../shared/clinicalSchemas.ts';
@@ -56,16 +55,17 @@ function loadOrCreateMasterKeys(): MasterKeys {
     };
   }
 
-  // Em plataformas serverless (como Netlify Functions), deriva chaves consistentes por domínio
-  // a partir da entropia do ambiente quando segredos explícitos são omitidos, garantindo que cookies
-  // de sessão sobrevivam entre invocações stateless.
+  // Em plataformas serverless (como Netlify Functions), deriva chaves determinísticas por site
+  // sem usar hostname/instância, garantindo que cookies e tokens de sessão sejam aceitos
+  // em qualquer container Lambda ou cold start quando segredos explícitos forem omitidos.
   if (isServerlessRuntime()) {
     const runtimeSeed = [
       process.env.GEMINI_API_KEY || '',
       process.env.SITE_ID || '',
+      process.env.SITE_NAME || '',
       process.env.URL || '',
-      process.env.DEPLOY_ID || '',
-      os.hostname(),
+      process.env.AWS_LAMBDA_FUNCTION_NAME || '',
+      'mediflow-netlify-vault-v1',
     ].join(':');
     return {
       encryptionKeyHex: envEnc

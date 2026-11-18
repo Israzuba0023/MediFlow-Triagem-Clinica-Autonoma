@@ -43,10 +43,16 @@ function authHeaders(extra?: Record<string, string>): Record<string, string> {
   };
 }
 
-// Padroniza a leitura JSON e propaga mensagens claras de erro do backend (ex.: 403 / 422)
+// Padroniza a leitura JSON e propaga mensagens claras de erro do backend (ex.: 401 / 403 / 422)
 async function parseJsonOrThrow<T>(res: Response): Promise<T> {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
+    if (res.status === 401) {
+      setClientSessionToken(null);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('mediflow:unauthorized'));
+      }
+    }
     const message =
       (data as { error?: string }).error || `Erro HTTP ${res.status} na comunicação com o servidor.`;
     throw new Error(message);
