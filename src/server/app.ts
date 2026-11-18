@@ -307,7 +307,7 @@ export function createMediFlowApp(): Express {
 
   // ---------------- MONITORAMENTO E SAÚDE DO SERVIÇO ----------------
   app.get('/api/health', (_req, res) => {
-    const key = process.env.GEMINI_API_KEY;
+    const key = process.env.GEMINI_API_KEY?.trim();
     res.json({
       status: 'ok',
       service: 'MediFlow Clinical Triage Agent',

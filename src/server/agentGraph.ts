@@ -12,10 +12,10 @@ import { isSafeExternalWebhookUrl, sanitizeClinicalInput } from './security.ts';
 import { addAlert, loadRules, upsertDocument } from './store.ts';
 
 function getGeminiClient(): GoogleGenAI {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey || apiKey === 'MY_GEMINI_API_KEY') {
     throw new Error(
-      'GEMINI_API_KEY não configurada no servidor. Configure a chave em Settings > Secrets para executar o agente multimodal.'
+      'GEMINI_API_KEY não configurada no servidor. Defina a variável de ambiente GEMINI_API_KEY no ambiente de hospedagem (no Netlify, inclua o escopo Functions e publique um novo deploy).'
     );
   }
   return new GoogleGenAI({
