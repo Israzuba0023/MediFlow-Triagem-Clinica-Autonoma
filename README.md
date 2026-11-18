@@ -28,12 +28,13 @@
 ### 1. Fluxo Completo de Triagem Multimodal
 Demonstração da ingestão documental, classificação clínica via IA, mascaramento LGPD automático e roteamento condicional para filas de emergência, rotina ou auditoria humana (HITL).
 
-![Testando Triagem](public/assets/aistudio/testando-triagem.gif)
+<img src="public/assets/aistudio/testando-triagem.gif" alt="Testando Triagem" width="100%" />
 
 ### 2. Defesa em Profundidade e Bloqueio de Ameaças
 Demonstração das camadas de pré-triagem defensiva bloqueando tentativas de injeção de código malicioso, *prompt injection* e uploads adulterados antes mesmo de acionar o modelo de IA.
 
-![Testando a Segurança](public/assets/aistudio/testando-seguranca.gif)
+<img src="public/assets/aistudio/testando-seguranca.gif" alt="Testando a Segurança" width="100%" />
+
 ---
 ## O que é o MediFlow?
 
