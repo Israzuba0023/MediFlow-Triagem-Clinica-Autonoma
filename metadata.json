@@ -1,0 +1,6 @@
+{
+  "name": "MediFlow — Triagem Clínica Autônoma",
+  "description": "Agente autônomo multimodal para triagem, extração estruturada e roteamento seguro de documentos clínicos com integração OCI Object Storage e auditoria Human-in-the-Loop.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

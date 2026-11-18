@@ -1,0 +1,63 @@
+# ==============================================================================
+# Pipeline de Integração Contínua (CI) e Verificação de Segurança — GitHub
+# ==============================================================================
+name: MediFlow CI & Security Gate
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+# Princípio do menor privilégio: o workflow precisa apenas de leitura do código
+permissions:
+  contents: read
+
+jobs:
+  verify-and-secure:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Baixa o código do repositório
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      # 2. Configura o Node.js 22 compatível com Express, Vite e Netlify Functions
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # 3. Instala dependências usando npm ci (se existir package-lock.json) ou npm install
+      - name: Instalar dependências
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      # 4. Verifica tipagem estrita TypeScript em frontend, backend e schemas compartilhados
+      - name: Verificação de tipos TypeScript
+        run: npm run lint
+
+      # 5. Garante que o bundle de produção do frontend (Vite) compila sem falhas
+      - name: Build de produção (Vite)
+        run: npm run build
+
+      # 6. Valida o empacotamento da função serverless que roda no Netlify
+      - name: Verificar bundle da função Netlify
+        run: npx esbuild netlify/functions/api.ts --bundle --platform=node --format=esm --outfile=/tmp/netlify-api-check.mjs --packages=external
+
+      # 7. Varredura preventiva para impedir push acidental de chaves/tokens reais
+      - name: Verificar ausência de segredos no código-fonte
+        run: |
+          if grep -rnE '(AIza[0-9A-Za-z_-]{35}|ghp_[0-9A-Za-z]{36}|github_pat_[0-9A-Za-z_]{22,}|GOCSPX-[0-9A-Za-z_-]+|-----BEGIN [A-Z ]*PRIVATE KEY-----)' src server.ts netlify index.html 2>/dev/null; then
+            echo "ERRO: Possível token ou chave privada detectada nos arquivos versionados."
+            exit 1
+          fi
+          echo "Varredura de segredos aprovada."
+
+      # 8. Auditoria de vulnerabilidades conhecidas nas dependências de produção
+      - name: Auditar dependências de produção (npm audit)
+        run: npm audit --omit=dev --audit-level=high || true
