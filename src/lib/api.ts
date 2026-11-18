@@ -82,13 +82,19 @@ export async function fetchOAuthUrl(provider: 'google' | 'github'): Promise<{ ur
 
 export async function loginDemoOAuth(
   provider: 'google' | 'github',
-  role: UserRole = 'ADMIN_GESTOR'
+  role: UserRole = 'ADMIN_GESTOR',
+  account?: { name?: string; email?: string }
 ): Promise<{ user: AuthUser; sessionToken: string }> {
   const res = await fetch('/api/auth/oauth/demo', {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ provider, role }),
+    body: JSON.stringify({
+      provider,
+      role,
+      name: account?.name,
+      email: account?.email,
+    }),
   });
   const data = await parseJsonOrThrow<{ user: AuthUser; sessionToken: string }>(res);
   setClientSessionToken(data.sessionToken);

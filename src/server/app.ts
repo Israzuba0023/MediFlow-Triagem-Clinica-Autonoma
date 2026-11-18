@@ -340,6 +340,18 @@ export function createMediFlowApp(): Express {
         ? req.body.role
         : 'ADMIN_GESTOR';
 
+    // Sanitiza nome e e-mail opcionais informados pelo visitante na etapa de identificação da conta
+    const rawName = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
+    const rawEmail = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+    const safeName = rawName.replace(/[<>"{}[\]\\;`]/g, '').slice(0, 80);
+    const emailRegex = /^[^\s@<>"{}[\]\\;`]+@[^\s@<>"{}[\]\\;`]+\.[^\s@<>"{}[\]\\;`]+$/;
+    const safeEmail = emailRegex.test(rawEmail) ? rawEmail.slice(0, 120) : '';
+
+    if (rawName && /[<>]|\b(script|onerror|onload|import|eval)\b/i.test(rawName)) {
+      res.status(422).json({ error: 'Nome de usuário contém caracteres não permitidos.' });
+      return;
+    }
+
     const roleProfiles: Record<UserRole, { dept: string; reg: string; label: string }> = {
       ADMIN_GESTOR: {
         dept: 'Governança Clínica & DPO (LGPD)',
@@ -360,16 +372,17 @@ export function createMediFlowApp(): Express {
 
     const profile = roleProfiles[requestedRole];
     const uniqueSuffix = crypto.randomBytes(6).toString('hex');
+    const defaultName =
+      provider === 'google'
+        ? `Conta Google (${profile.label})`
+        : `Conta GitHub (${profile.label})`;
+    const defaultEmail =
+      provider === 'google' ? 'demo.google@mediflow.health' : 'demo.github@mediflow.health';
+
     const demoUser: AuthUser = registerOAuthUser({
       id: `oauth-${provider}-${uniqueSuffix}`,
-      name:
-        provider === 'google'
-          ? `Conta Google (${profile.label})`
-          : `Conta GitHub (${profile.label})`,
-      email:
-        provider === 'google'
-          ? 'demo.google@mediflow.health'
-          : 'demo.github@mediflow.health',
+      name: safeName || defaultName,
+      email: safeEmail || defaultEmail,
       role: requestedRole,
       department: profile.dept,
       crmOrRegistry: `${profile.reg} · SSO ${provider.toUpperCase()}`,
@@ -384,7 +397,7 @@ export function createMediFlowApp(): Express {
       ip: getClientIp(req),
       action: 'LOGIN_SUCCESS',
       resourceId: demoUser.id,
-      details: `Sessão demo federada via ${provider.toUpperCase()} iniciada com perfil ${demoUser.role}.`,
+      details: `Sessão demo federada via ${provider.toUpperCase()} (${demoUser.email}) iniciada com perfil ${demoUser.role}.`,
     });
 
     res.json({ user: demoUser, sessionToken: token });
@@ -399,7 +412,7 @@ export function createMediFlowApp(): Express {
     const setStateCookie = () => {
       res.cookie(OAUTH_STATE_COOKIE_NAME, signOAuthState(state), {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: isHttps ? 'none' : 'lax',
         secure: isHttps,
         maxAge: 10 * 60 * 1000,
         path: '/',
@@ -570,14 +583,37 @@ export function createMediFlowApp(): Express {
         id: number;
         login: string;
         name?: string;
-        email?: string;
+        email?: string | null;
         avatar_url?: string;
       };
+      // Caso o e-mail público no GitHub esteja oculto, consulta os e-mails verificados da conta
+      let resolvedEmail = ghUser.email || undefined;
+      if (!resolvedEmail) {
+        try {
+          const emailsRes = await fetch('https://api.github.com/user/emails', {
+            headers: {
+              Authorization: `Bearer ${tokenJson.access_token}`,
+              'User-Agent': 'MediFlow-App',
+            },
+          });
+          if (emailsRes.ok) {
+            const emails = (await emailsRes.json()) as Array<{
+              email: string;
+              primary: boolean;
+              verified: boolean;
+            }>;
+            const primary = emails.find((e) => e.primary && e.verified) || emails.find((e) => e.verified);
+            resolvedEmail = primary?.email;
+          }
+        } catch {
+          // Segue com e-mail fallback noreply do GitHub se a consulta secundária falhar
+        }
+      }
       const oauthUser = registerOAuthUser({
         id: `github-${ghUser.id}`,
         name: ghUser.name || ghUser.login,
-        email: ghUser.email || `${ghUser.login}@users.noreply.github.com`,
-        role: resolveOAuthRole(ghUser.email),
+        email: resolvedEmail || `${ghUser.login}@users.noreply.github.com`,
+        role: resolveOAuthRole(resolvedEmail),
         department: 'Acesso Federado GitHub',
         crmOrRegistry: `GitHub @${ghUser.login}`,
         provider: 'github',
