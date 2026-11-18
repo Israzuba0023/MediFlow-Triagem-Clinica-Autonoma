@@ -25,7 +25,16 @@
 10. [Deploy no Netlify & Pipeline GitHub](#deploy-no-netlify--pipeline-github)
 
 ---
+### 1. Fluxo Completo de Triagem Multimodal
+Demonstração da ingestão documental, classificação clínica via IA, mascaramento LGPD automático e roteamento condicional para filas de emergência, rotina ou auditoria humana (HITL).
 
+![Testando Triagem](public/assets/aistudio/testando-triagem.gif)
+
+### 2. Defesa em Profundidade e Bloqueio de Ameaças
+Demonstração das camadas de pré-triagem defensiva bloqueando tentativas de injeção de código malicioso, *prompt injection* e uploads adulterados antes mesmo de acionar o modelo de IA.
+
+![Testando a Segurança](public/assets/aistudio/testando-seguranca.gif)
+---
 ## O que é o MediFlow?
 
 O **MediFlow** é uma plataforma web full-stack voltada para **apoio à triagem documental em ambientes de saúde** (pronto-socorro, ambulatórios, recepção hospitalar e auditoria de convênios).
