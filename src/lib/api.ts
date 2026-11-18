@@ -87,7 +87,7 @@ export async function fetchOAuthUrl(provider: 'google' | 'github'): Promise<{ ur
 }
 
 export async function loginDemoOAuth(
-  provider: 'google' | 'github',
+  provider: 'local' | 'google' | 'github' = 'local',
   role: UserRole = 'ADMIN_GESTOR',
   account?: { name?: string; email?: string }
 ): Promise<{ user: AuthUser; sessionToken: string }> {

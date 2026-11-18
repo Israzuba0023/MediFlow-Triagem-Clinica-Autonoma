@@ -333,13 +333,18 @@ export function createMediFlowApp(): Express {
       return;
     }
 
-    const provider = req.body?.provider === 'github' ? 'github' : 'google';
+    const provider: 'local' | 'google' | 'github' =
+      req.body?.provider === 'github'
+        ? 'github'
+        : req.body?.provider === 'google'
+          ? 'google'
+          : 'local';
     const requestedRole: UserRole =
       req.body?.role === 'AUDITOR_CLINICO' || req.body?.role === 'OPERADOR_TRIAGEM'
         ? req.body.role
         : 'ADMIN_GESTOR';
 
-    // Sanitiza nome e e-mail opcionais informados pelo visitante na etapa de identificação da conta
+    // Sanitiza nome e e-mail opcionais informados na requisição
     const rawName = typeof req.body?.name === 'string' ? req.body.name.trim() : '';
     const rawEmail = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
     const safeName = rawName.replace(/[<>"{}[\]\\;`]/g, '').slice(0, 80);
@@ -374,9 +379,15 @@ export function createMediFlowApp(): Express {
     const defaultName =
       provider === 'google'
         ? `Conta Google (${profile.label})`
-        : `Conta GitHub (${profile.label})`;
+        : provider === 'github'
+          ? `Conta GitHub (${profile.label})`
+          : profile.label;
     const defaultEmail =
-      provider === 'google' ? 'demo.google@mediflow.health' : 'demo.github@mediflow.health';
+      provider === 'google'
+        ? 'demo.google@mediflow.health'
+        : provider === 'github'
+          ? 'demo.github@mediflow.health'
+          : 'acesso@mediflow.health';
 
     const demoUser: AuthUser = registerOAuthUser({
       id: `oauth-${provider}-${uniqueSuffix}`,
@@ -384,7 +395,10 @@ export function createMediFlowApp(): Express {
       email: safeEmail || defaultEmail,
       role: requestedRole,
       department: profile.dept,
-      crmOrRegistry: `${profile.reg} · SSO ${provider.toUpperCase()}`,
+      crmOrRegistry:
+        provider === 'local'
+          ? profile.reg
+          : `${profile.reg} · SSO ${provider.toUpperCase()}`,
       provider,
     });
 
