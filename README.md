@@ -1,11 +1,34 @@
 <div align="center">
-  <img src="public/assets/aistudio/favicon_bbce6d06.svg" alt="Logo MediFlow" width="72" height="72" />
+  <img src="public/assets/aistudio/favicon_bbce6d06.svg" alt="Logo MediFlow" width="84" height="84" />
   <h1>MediFlow — Triagem Clínica Autônoma</h1>
   <p>
     <strong>Agente multimodal de triagem, extração estruturada e roteamento seguro de documentos clínicos com arquitetura <em>Human-in-the-Loop</em> (HITL), criptografia AES-256-GCM e integração Oracle OCI Object Storage.</strong>
   </p>
+
+  <!-- Badges de Tecnologias & Arquitetura -->
   <p>
-    <em>Projeto desenvolvido para o Hackathon ONE G10 (Oracle Next Education &amp; Alura) · Equipa 23</em>
+    <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+    <img src="https://img.shields.io/badge/Node.js_22-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+    <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+    <br />
+    <img src="https://img.shields.io/badge/Google_Gemini_AI-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Google Gemini AI" />
+    <img src="https://img.shields.io/badge/Oracle_Cloud_OCI-F80000?style=for-the-badge&logo=oracle&logoColor=white" alt="Oracle Cloud OCI" />
+    <img src="https://img.shields.io/badge/Zod_Validation-3E67B1?style=for-the-badge&logo=zod&logoColor=white" alt="Zod" />
+    <img src="https://img.shields.io/badge/AES--256--GCM_%7C_LGPD-0F766E?style=for-the-badge&logo=shield&logoColor=white" alt="Segurança AES-256-GCM e LGPD" />
+    <img src="https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white" alt="Netlify" />
+  </p>
+
+  <p>
+    <em>Projeto desenvolvido para o Hackathon ONE G10 (Oracle Next Education & Alura) · Equipa 23</em>
+  </p>
+
+  <!-- Botão Principal de Acesso -->
+  <p>
+    <a href="https://mediflow-2.netlify.app/" target="_blank">
+      <img src="https://img.shields.io/badge/🚀_Aceder_à_Aplicação_Online_(Netlify)-0F766E?style=for-the-badge" alt="Aceder à Aplicação Online" />
+    </a>
   </p>
 </div>
 
@@ -13,18 +36,26 @@
 
 ## Sumário
 
-1. [O que é o MediFlow?](#o-que-é-o-mediflow)
-2. [Funcionalidades Principais](#funcionalidades-principais)
-3. [Como Funciona (Grafo de Decisão Autônomo)](#como-funciona-grafo-de-decisão-autônomo)
-4. [Visão das Telas do Sistema](#visão-das-telas-do-sistema)
-5. [Segurança, Privacidade e Conformidade (LGPD / HIPAA)](#segurança-privacidade-e-conformidade-lgpd--hipaa)
-6. [Arquitetura e Estrutura do Repositório](#arquitetura-e-estrutura-do-repositório)
-7. [Integração OCI Object Storage (Always Free)](#integração-oci-object-storage-always-free)
-8. [Contrato da API REST](#contrato-da-api-rest)
-9. [Como Executar Localmente](#como-executar-localmente)
-10. [Deploy no Netlify & Pipeline GitHub](#deploy-no-netlify--pipeline-github)
+1. [Acesso Rápido & Demonstração em Ação](#acesso-rápido--demonstração-em-ação)
+2. [O que é o MediFlow?](#o-que-é-o-mediflow)
+3. [Stack Tecnológica](#stack-tecnológica)
+4. [Funcionalidades Principais](#funcionalidades-principais)
+5. [Como Funciona (Grafo de Decisão Autônomo)](#como-funciona-grafo-de-decisão-autônomo)
+6. [Visão das Telas do Sistema](#visão-das-telas-do-sistema)
+7. [Segurança, Privacidade e Conformidade (LGPD / HIPAA)](#segurança-privacidade-e-conformidade-lgpd--hipaa)
+8. [Arquitetura e Estrutura do Repositório](#arquitetura-e-estrutura-do-repositório)
+9. [Integração OCI Object Storage (Always Free)](#integração-oci-object-storage-always-free)
+10. [Contrato da API REST](#contrato-da-api-rest)
+11. [Como Executar Localmente](#como-executar-localmente)
+12. [Deploy no Netlify & Pipeline GitHub](#deploy-no-netlify--pipeline-github)
 
 ---
+
+## Acesso Rápido & Demonstração em Ação
+
+- **Aplicação em Produção:** [https://mediflow-2.netlify.app/](https://mediflow-2.netlify.app/)
+- **Credenciais de Demonstração:** Selecione um perfil RBAC (`ADMIN_GESTOR`, `AUDITOR_CLINICO` ou `OPERADOR_TRIAGEM`) na tela inicial e clique em **Entrar com Google** ou **Entrar com GitHub**.
+
 ### 1. Fluxo Completo de Triagem Multimodal
 Demonstração da ingestão documental, classificação clínica via IA, mascaramento LGPD automático e roteamento condicional para filas de emergência, rotina ou auditoria humana (HITL).
 
@@ -36,6 +67,7 @@ Demonstração das camadas de pré-triagem defensiva bloqueando tentativas de in
 <img src="public/assets/aistudio/testando-seguranca-hd.gif" alt="Testando a Segurança" width="100%" />
 
 ---
+
 ## O que é o MediFlow?
 
 O **MediFlow** é uma plataforma web full-stack voltada para **apoio à triagem documental em ambientes de saúde** (pronto-socorro, ambulatórios, recepção hospitalar e auditoria de convênios).
@@ -50,6 +82,21 @@ O MediFlow resolve esse problema com um **agente clínico autônomo em 5 etapas*
 5. **Persiste com criptografia AES-256-GCM** em buckets segregados compatíveis com a **Oracle Cloud Infrastructure (OCI)**, mantendo sigilo LGPD por padrão e trilha de auditoria criptográfica `SHA-256`.
 
 > **Princípio do projeto:** *Tecnologia que organiza. Gente que decide.* O agente estrutura e sinaliza prioridades para apoiar equipes médicas — a decisão clínica final permanece com profissionais de saúde.
+
+---
+
+## Stack Tecnológica
+
+| Camada | Tecnologias & Bibliotecas | Papel na Arquitetura |
+| --- | --- | --- |
+| **Linguagem Base** | **TypeScript** (Strict Mode) | Tipagem ponta a ponta compartilhada entre frontend, backend e contratos de schema. |
+| **Frontend** | **React 19**, **Vite**, **Tailwind CSS**, **Lucide Icons** | Interface clínica responsiva, visualização do grafo de decisão, bancada HITL e explorador OCI. |
+| **Backend & Serverless** | **Node.js 22**, **Express**, **Serverless-HTTP**, **Multer** | API REST segura executada tanto em servidor Node local quanto em **Netlify Functions**. |
+| **Inteligência Artificial** | **Google GenAI SDK (`@google/genai`)** (`gemini-4-hydrogen` / `gemini-3.1-flash-lite`) | Classificação multimodal de documentos (PDF, imagens, JSON e texto) com saída estruturada. |
+| **Validação & Regras** | **Zod** + Motor de Regras Determinísticas | Garantia de contrato JSON estrito, validação de CRM, CID-10 críticos e medicamentos de alto risco. |
+| **Cloud & Persistência** | **Oracle Cloud Infrastructure (OCI) Object Storage** | Segregação de artefatos por prefixos clínicos compatível com a camada *Always Free* (20 GB). |
+| **Segurança & Criptografia** | **Node `crypto` (`AES-256-GCM`, `HMAC-SHA256`, `SHA-256`)**, **Helmet** | Criptografia em repouso, sessões stateless, mascaramento LGPD, Anti-IDOR, Anti-SSRF e auditoria imutável. |
+| **CI/CD & Hospedagem** | **GitHub Actions**, **Netlify** | Pipeline automatizado de lint, build, empacotamento serverless e scan de segredos. |
 
 ---
 
